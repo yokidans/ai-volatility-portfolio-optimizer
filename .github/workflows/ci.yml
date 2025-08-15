@@ -2,9 +2,9 @@
 
 on:
   push:
-    branches: [ "main", "A-Foundation", "B-Data-Contracts", "C-Volatility-Models", "D-DCC-CVaR", "E-Backtesting", "F-Dashboard" ]
+    branches: [ "main", "Task1-Foundation", "Task2-Data-Contracts", "Task3-Volatility-Models", "Task4-DCC-CVaR", "Task5-Backtesting", "Task6-Dashboard" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "Task1-Foundation", "Task2-Data-Contracts", "Task3-Volatility-Models", "Task4-DCC-CVaR", "Task5-Backtesting", "Task6-Dashboard" ]
 
 jobs:
   lint:
