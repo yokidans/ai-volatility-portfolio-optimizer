@@ -1,7 +1,10 @@
 ﻿[tool.ruff]
 line-length = 88
+
+[tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "C", "N", "D", "S", "T", "Q"]
 ignore = []
+extend-ignore = ["D203", "D212"]  # Resolve incompatible docstring rules
 
 [tool.black]
 line-length = 88

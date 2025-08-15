@@ -1,4 +1,6 @@
-﻿from pathlib import Path
+﻿"""Configuration settings for the volatility forecasting project."""
+
+from pathlib import Path
 
 # Paths
 PROJECT_ROOT = Path(__file__).parent.parent.parent
