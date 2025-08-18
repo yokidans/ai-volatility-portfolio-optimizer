@@ -1,19 +1,30 @@
-﻿"""Configuration settings for the volatility forecasting project."""
-
 from pathlib import Path
+from datetime import datetime
+import os
+from dotenv import load_dotenv
 
-# Paths
-PROJECT_ROOT = Path(__file__).parent.parent.parent
-DATA_DIR = PROJECT_ROOT / "data"
-RAW_DATA_DIR = DATA_DIR / "raw"
-INTERIM_DATA_DIR = DATA_DIR / "interim"
-PROCESSED_DATA_DIR = DATA_DIR / "processed"
+# Load environment variables
+load_dotenv()
 
-# Tickers
-EQUITY_TICKERS = ["SPY", "TSLA"]
-BOND_TICKERS = ["BND"]
-VOLATILITY_TICKERS = ["VIX"]
-MACRO_TICKERS = ["DGS10", "DGS2"]
+# Project root directory
+REPO_ROOT = Path(__file__).parent.parent.parent
 
-# Seeds
-RANDOM_SEED = 42
+# Data directories
+RAW_DATA_DIR = REPO_ROOT / "data" / "raw"
+PROCESSED_DATA_DIR = REPO_ROOT / "data" / "processed"
+PRELOADED_DATA_DIR = REPO_ROOT / "data" / "preloaded"  # New directory for preloaded data
+
+# Logs directory
+LOGS_DIR = REPO_ROOT / "logs"
+LOGS_DIR.mkdir(parents=True, exist_ok=True)
+
+# Data parameters
+TICKERS = ["AAPL", "MSFT", "GOOG"]  # Using standard ticker symbols
+BENCHMARKS = ["SPY"]  # S&P 500 ETF
+
+# Date ranges
+TRAIN_START = datetime(2010, 1, 1)
+END_DATE = datetime.now()
+
+# Cache settings
+CACHE_FORMAT = "csv"  # Options: "csv", "parquet", "pickle"
