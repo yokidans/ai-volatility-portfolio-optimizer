@@ -69,6 +69,14 @@ pip install -e .[dev]
 
 # Or with GPU support
 pip install -e .[dev,gpu]
+```
+```bash
+cp .env.example .env
+# Add your keys:
+# FRED_API_KEY=your_key_here
+# YFINANCE_CACHE_PATH=./data/raw
+
+
 
 
 
