@@ -1,6 +1,6 @@
 # AI-Driven Volatility Forecasting & Adaptive Portfolio Optimization  
 
-![CI](https://github.com/yokidans/ai-volatility-portfolio-optimizer/actions/workflows/ci.yml/badge.svg),  
+![CI](https://github.com/yokidans/ai-volatility-portfolio-optimizer/actions/workflows/ci.yml/badge.svg)
 ![Coverage](https://codecov.io/gh/your-org/ai-volatility-portfolio-optimizer/branch/main/graph/badge.svg)  
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)  
 ![Python](https://img.shields.io/badge/python-3.10+-blue.svg)  
@@ -247,6 +247,7 @@ This project is licensed under the **MIT License** – see [LICENSE](LICENSE) fo
   year = {2025},
   url = {https://github.com/your-org/ai-volatility-portfolio-optimizer}
 }
+
 
 
 
