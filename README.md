@@ -4,7 +4,7 @@
 ![Coverage](https://codecov.io/gh/your-org/ai-volatility-portfolio-optimizer/branch/main/graph/badge.svg) 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
-[![codecov](https://codecov.io/gh/<USERNAME>/<REPO>/branch/main/graph/badge.svg)](https://codecov.io/gh/<USERNAME>/<REPO>)
+[![codecov](https://codecov.io/gh/<teferi>/<REPO>/branch/main/graph/badge.svg)](https://codecov.io/gh/<teferi>/<REPO>)
 
 
 > **Institutional-Grade Quantitative Portfolio Engine** with probabilistic volatility forecasting, regime-aware optimization, and crash-resistant backtesting.  
@@ -247,6 +247,7 @@ This project is licensed under the **MIT License** – see [LICENSE](LICENSE) fo
   year = {2025},
   url = {https://github.com/your-org/ai-volatility-portfolio-optimizer}
 }
+
 
 
 
