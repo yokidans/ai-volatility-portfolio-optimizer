@@ -1,6 +1,6 @@
-from pathlib import Path
 from datetime import datetime
-import os
+from pathlib import Path
+
 from dotenv import load_dotenv
 
 # Load environment variables

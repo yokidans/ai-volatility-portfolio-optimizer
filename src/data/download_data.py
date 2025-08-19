@@ -1,6 +1,6 @@
-import yfinance as yf
-import pandas as pd
 from pathlib import Path
+
+import yfinance as yf
 
 # Tickers
 tickers = ["AAPL", "MSFT", "GOOGL"]
@@ -17,5 +17,3 @@ Path("data").mkdir(exist_ok=True)
 # Save to CSV
 returns.to_csv("data/returns.csv")
 
-print("✅ Data downloaded and saved to data/returns.csv")
-print(returns.head())

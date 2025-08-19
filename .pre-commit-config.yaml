@@ -18,3 +18,16 @@
     rev: v1.4.1
     hooks:
     -   id: mypy
+
+  - repo: https://github.com/psf/black
+    rev: 24.3.0 # or latest stable release
+    hooks:
+      - id: black
+        language_version: python3
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.5.6 # or latest stable release
+    hooks:
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]  # auto-fix style issues
+
