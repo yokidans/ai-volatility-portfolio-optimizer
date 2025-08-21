@@ -1,0 +1,61 @@
+{
+  "report_date": "2025-08-21T23:54:35.688866",
+  "git_commit": "34dd611",
+  "git_branch": "main",
+  "data_range": {
+    "start": "2017-03-22T00:00:00",
+    "end": "2025-08-21T00:00:00",
+    "n_observations": 3075
+  },
+  "model_performance": {
+    "gjr_garch": {
+      "MAE": 0.019723128568224762,
+      "RMSE": 0.0242262365893618,
+      "Bias": -0.013814623536853777,
+      "Direction_Accuracy": 0.6772934287573195,
+      "CVaR_wRMSE": 0.024781277085975655
+    },
+    "transformer_lstm": {
+      "MAE": 0.025055102748626403,
+      "RMSE": 0.0293930743068215,
+      "Bias": -0.024092726427836674,
+      "Direction_Accuracy": 0.7065712426805465,
+      "CVaR_wRMSE": 0.03087657846468988,
+      "Coverage": 1.0,
+      "Avg_Width": 0.28546614240713114,
+      "Coverage_Error": 0.09999999999999998
+    }
+  },
+  "risk_metrics": {
+    "Metric": {
+      "0": "VaR (95%)",
+      "1": "CVaR (95%)",
+      "2": "High Vol RMSE",
+      "3": "Max Drawdown"
+    },
+    "LSTM": {
+      "0": 0.0026,
+      "1": 0.009,
+      "2": 0.0435,
+      "3": -0.0
+    },
+    "GJR-GARCH": {
+      "0": 0.0196,
+      "1": 0.0272,
+      "2": 0.0303,
+      "3": -2131.2623
+    }
+  },
+  "key_findings": {
+    "best_model": "GJR-GARCH",
+    "improvement_pct": -21.3,
+    "coverage_achieved": 100.0,
+    "tail_performance": "Inferior"
+  },
+  "recommendations": [
+    "Use Transformer-LSTM for primary volatility forecasting",
+    "Implement dynamic allocation based on volatility regimes",
+    "Monitor quantile coverage monthly for calibration drift",
+    "Use CVaR-weighted metrics for risk management decisions"
+  ]
+}
