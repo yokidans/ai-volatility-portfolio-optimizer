@@ -7,20 +7,24 @@ from src.backtest.scenarios import StressScenarios
 
 @pytest.fixture
 def mock_portfolio_weights():
-    return pd.DataFrame({
-        "SPY": [0.4],
-        "TSLA": [0.3],
-        "BND": [0.3]
-    }, index=[pd.to_datetime("2020-02-20")])
+    return pd.DataFrame(
+        {"SPY": [0.4], "TSLA": [0.3], "BND": [0.3]},
+        index=[pd.to_datetime("2020-02-20")],
+    )
+
 
 @pytest.fixture
 def mock_prices():
     dates = pd.date_range(start="2020-02-10", periods=20)
-    return pd.DataFrame({
-        "SPY": [330 + i * 0.5 for i in range(20)],
-        "TSLA": [180 + i * 1.2 for i in range(20)],
-        "BND": [82 + i * 0.05 for i in range(20)]
-    }, index=dates)
+    return pd.DataFrame(
+        {
+            "SPY": [330 + i * 0.5 for i in range(20)],
+            "TSLA": [180 + i * 1.2 for i in range(20)],
+            "BND": [82 + i * 0.05 for i in range(20)],
+        },
+        index=dates,
+    )
+
 
 def test_covid_crash(mock_prices, mock_portfolio_weights):
     """Test portfolio behavior during COVID crash."""
@@ -36,6 +40,8 @@ def test_covid_crash(mock_prices, mock_portfolio_weights):
     results = backtester.run_backtest(covid_prices, mock_portfolio_weights)
 
     # Portfolio should lose value but less than worst asset
-    max_drawdown = (results["portfolio_value"].min() - results["portfolio_value"].iloc[0]) / results["portfolio_value"].iloc[0]
+    max_drawdown = (
+        results["portfolio_value"].min() - results["portfolio_value"].iloc[0]
+    ) / results["portfolio_value"].iloc[0]
     assert max_drawdown < -0.15  # Significant drawdown
     assert max_drawdown > -0.5  # But not as bad as worst asset

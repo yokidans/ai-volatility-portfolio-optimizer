@@ -29,7 +29,9 @@ class PortfolioDashboard:
                 "returns": pd.read_parquet(self.data_dir / "returns.parquet"),
                 "volatility": pd.read_parquet(self.data_dir / "volatility.parquet"),
                 "weights": pd.read_parquet(self.data_dir / "portfolio_weights.parquet"),
-                "performance": pd.read_parquet(self.data_dir / "backtest_results.parquet")
+                "performance": pd.read_parquet(
+                    self.data_dir / "backtest_results.parquet"
+                ),
             }
         except Exception as e:
             logger.error("Failed to load data", error=str(e))
@@ -41,14 +43,11 @@ class PortfolioDashboard:
         with st.sidebar:
             st.header("Portfolio Controls")
             st.session_state.regime_filter = st.selectbox(
-                "Volatility Regime",
-                ["All", "Low", "Medium", "High", "Extreme"]
+                "Volatility Regime", ["All", "Low", "Medium", "High", "Extreme"]
             )
 
             st.session_state.risk_appetite = st.select_slider(
-                "Risk Appetite",
-                options=["Low", "Medium", "High"],
-                value="Medium"
+                "Risk Appetite", options=["Low", "Medium", "High"], value="Medium"
             )
 
             st.slider(
@@ -56,7 +55,7 @@ class PortfolioDashboard:
                 min_value=1,
                 max_value=60,
                 value=24,
-                key="lookback"
+                key="lookback",
             )
 
     def render_performance_tab(self, data: Dict[str, pd.DataFrame]):
@@ -66,7 +65,9 @@ class PortfolioDashboard:
         # Filter data based on regime
         if st.session_state.regime_filter != "All":
             regime_data = pd.read_parquet(self.data_dir / "regime_features.parquet")
-            regime_mask = regime_data[f"regime_{st.session_state.regime_filter.upper()}"] == 1
+            regime_mask = (
+                regime_data[f"regime_{st.session_state.regime_filter.upper()}"] == 1
+            )
             filtered_perf = data["performance"][regime_mask]
         else:
             filtered_perf = data["performance"]
@@ -77,7 +78,7 @@ class PortfolioDashboard:
             x=filtered_perf.index,
             y="portfolio_value",
             title="Portfolio Value Over Time",
-            labels={"portfolio_value": "Portfolio Value (USD)", "index": "Date"}
+            labels={"portfolio_value": "Portfolio Value (USD)", "index": "Date"},
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -87,7 +88,7 @@ class PortfolioDashboard:
         fig = px.area(
             drawdown,
             title="Portfolio Drawdown",
-            labels={"value": "Drawdown", "index": "Date"}
+            labels={"value": "Drawdown", "index": "Date"},
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -102,7 +103,7 @@ class PortfolioDashboard:
             cvar_data,
             x=cvar_data.index,
             y="cvar_contribution",
-            title="CVaR Contribution by Asset"
+            title="CVaR Contribution by Asset",
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -113,7 +114,7 @@ class PortfolioDashboard:
             x=data["volatility"].index,
             y=data["volatility"].columns,
             title="Volatility Forecasts",
-            labels={"value": "Volatility", "index": "Date"}
+            labels={"value": "Volatility", "index": "Date"},
         )
         st.plotly_chart(fig, use_container_width=True)
 
@@ -122,7 +123,7 @@ class PortfolioDashboard:
         st.set_page_config(
             page_title="AI Portfolio Optimizer",
             layout="wide",
-            initial_sidebar_state="expanded"
+            initial_sidebar_state="expanded",
         )
 
         st.title("AI-Driven Portfolio Optimization Dashboard")
@@ -132,7 +133,9 @@ class PortfolioDashboard:
         if data is None:
             return
 
-        tab1, tab2, tab3 = st.tabs(["Performance", "Risk Analysis", "Portfolio Composition"])
+        tab1, tab2, tab3 = st.tabs(
+            ["Performance", "Risk Analysis", "Portfolio Composition"]
+        )
 
         with tab1:
             self.render_performance_tab(data)
@@ -147,9 +150,10 @@ class PortfolioDashboard:
                 x=data["weights"].index,
                 y=data["weights"].columns,
                 title="Portfolio Weights",
-                labels={"value": "Weight", "index": "Date"}
+                labels={"value": "Weight", "index": "Date"},
             )
             st.plotly_chart(fig, use_container_width=True)
+
 
 if __name__ == "__main__":
     dashboard = PortfolioDashboard()

@@ -1,33 +1,40 @@
-# AI-Driven Volatility Forecasting & Adaptive Portfolio Optimization  
+# AI-Driven Volatility Forecasting & Adaptive Portfolio Optimization
 
+<<<<<<< Updated upstream
 ![CI](https://github.com/yokidans/ai-volatility-portfolio-optimizer/actions/workflows/ci.yml/badge.svg)
-![Coverage](https://codecov.io/gh/your-org/ai-volatility-portfolio-optimizer/branch/main/graph/badge.svg) 
+![Coverage](https://codecov.io/gh/your-org/ai-volatility-portfolio-optimizer/branch/main/graph/badge.svg)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
 [![codecov](https://codecov.io/gh/<teferi>/<REPO>/branch/main/graph/badge.svg)](https://codecov.io/gh/<teferi>/<REPO>)
 
+=======
+![CI](https://github.com/your-org/ai-volatility-portfolio-optimizer/actions/workflows/ci.yml/badge.svg)
+![Coverage](https://codecov.io/gh/your-org/ai-volatility-portfolio-optimizer/branch/main/graph/badge.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Python](https://img.shields.io/badge/python-3.10+-blue.svg)
+>>>>>>> Stashed changes
 
-> **Institutional-Grade Quantitative Portfolio Engine** with probabilistic volatility forecasting, regime-aware optimization, and crash-resistant backtesting.  
-
----
-
-## 🎯 What This Solves  
-
-Traditional **Modern Portfolio Theory (MPT)** fails during crises because:  
-
-- ❌ Static correlations break in volatility regimes  
-- ❌ Gaussian assumptions ignore tail risk  
-- ❌ Backtests overfit without proper regime stratification  
-
-**This system delivers:**  
-- ✅ **DCC-GARCH** dynamic correlations adapting to regimes  
-- ✅ **CVaR optimization** focusing on tail losses  
-- ✅ **Monte Carlo stress testing** across 2008 / 2020 / 2022 crises  
-- ✅ **Explainable AI** with regime triggers & feature attribution  
+> **Institutional-Grade Quantitative Portfolio Engine** with probabilistic volatility forecasting, regime-aware optimization, and crash-resistant backtesting.
 
 ---
 
-## 📊 Performance Highlights  
+## 🎯 What This Solves
+
+Traditional **Modern Portfolio Theory (MPT)** fails during crises because:
+
+- ❌ Static correlations break in volatility regimes
+- ❌ Gaussian assumptions ignore tail risk
+- ❌ Backtests overfit without proper regime stratification
+
+**This system delivers:**
+- ✅ **DCC-GARCH** dynamic correlations adapting to regimes
+- ✅ **CVaR optimization** focusing on tail losses
+- ✅ **Monte Carlo stress testing** across 2008 / 2020 / 2022 crises
+- ✅ **Explainable AI** with regime triggers & feature attribution
+
+---
+
+## 📊 Performance Highlights
 
 | Metric          | This System | Traditional MPT | Improvement |
 |-----------------|------------:|----------------:|------------:|
@@ -36,17 +43,17 @@ Traditional **Modern Portfolio Theory (MPT)** fails during crises because:
 | Sortino Ratio   | 1.27        | 0.89            | 43% increase |
 | Crisis Recovery | 156 days    | 412 days        | 62% faster |
 
-![Volatility Forecast](https://media/volatility_forecast.png)  
-*Hybrid GJR-GARCH + LSTM achieves 0.003 MAE (3.8% of avg volatility)*  
+![Volatility Forecast](https://media/volatility_forecast.png)
+*Hybrid GJR-GARCH + LSTM achieves 0.003 MAE (3.8% of avg volatility)*
 
 ---
 
-## 🏗️ Architecture Overview  
+## 🏗️ Architecture Overview
 
-- Hybrid **volatility forecasting pipeline** (GJR-GARCH + LSTM)  
-- **Regime-aware optimization** with CVaR  
-- **Backtesting framework** for crash-resilient evaluation  
-- **Dashboard** for real-time monitoring  
+- Hybrid **volatility forecasting pipeline** (GJR-GARCH + LSTM)
+- **Regime-aware optimization** with CVaR
+- **Backtesting framework** for crash-resilient evaluation
+- **Dashboard** for real-time monitoring
 
 ```mermaid
 graph TD
@@ -54,24 +61,24 @@ graph TD
     B --> C[Kalman Imputation];
     B --> D[Pandera Validation];
     B --> E[Regime Labeling];
-    
+
     E --> F[Volatility Models];
     F --> G[GJR-GARCH<br/>γ=0.15 p<0.01];
     F --> H[Transformer-LSTM<br/>MAE: 0.0065];
-    
+
     H --> I[DCC-GARCH<br/>Dynamic Correlations];
     I --> J[CVaR Optimization<br/>α=0.05];
-    
+
     J --> K[Backtest Engine];
     K --> L[Stress Tests<br/>2008/2020/2022];
     K --> M[Monte Carlo<br/>5000 scenarios];
-    
+
     M --> N[Dashboard<br/>Real-time Monitoring];
 
 ```
-## 🚀 Quick Start  
+## 🚀 Quick Start
 
-### 1. Installation  
+### 1. Installation
 
 ```bash
 # Clone with submodules
@@ -107,9 +114,9 @@ make backtest
 # Launch dashboard
 make dashboard
 ```
-# 📈 Key Features  
+# 📈 Key Features
 
-## 🔮 Probabilistic Volatility Forecasting  
+## 🔮 Probabilistic Volatility Forecasting
 
 ```python
 forecast = model.predict_volatility(X, n_samples=1000)
@@ -156,9 +163,9 @@ RUN pip install -r requirements.txt
 COPY . .
 CMD ["python", "-m", "src.app.dashboard"]
 ```
-# 📊 Model Performance  
+# 📊 Model Performance
 
-## Forecasting Accuracy  
+## Forecasting Accuracy
 
 | Model       | MAE    | RMSE   | Direction Accuracy | Runtime (ms) |
 |-------------|-------:|-------:|-------------------:|-------------:|
@@ -168,7 +175,7 @@ CMD ["python", "-m", "src.app.dashboard"]
 
 ---
 
-## Portfolio Results (2018–2025)  
+## Portfolio Results (2018–2025)
 
 | Strategy         | CAGR  | Volatility | Max DD  | Sharpe | Sortino |
 |------------------|------:|-----------:|--------:|-------:|--------:|
@@ -178,9 +185,9 @@ CMD ["python", "-m", "src.app.dashboard"]
 
 ---
 
-# 🛠️ Development  
+# 🛠️ Development
 
-### Code Quality  
+### Code Quality
 
 ```bash
 # Format & lint
@@ -191,54 +198,54 @@ make type      # mypy strict
 make test      # pytest with coverage
 make stress    # crisis scenario tests
 ```
-# 📚 Research Foundation  
+# 📚 Research Foundation
 
-## Key Papers Implemented  
-- Engle (2002) – DCC-GARCH for dynamic correlations  
-- Rockafellar & Uryasev (2000) – CVaR optimization  
-- Ledoit & Wolf (2004) – Covariance shrinkage  
-- López de Prado (2018) – Advanced backtesting  
+## Key Papers Implemented
+- Engle (2002) – DCC-GARCH for dynamic correlations
+- Rockafellar & Uryasev (2000) – CVaR optimization
+- Ledoit & Wolf (2004) – Covariance shrinkage
+- López de Prado (2018) – Advanced backtesting
 
-## Innovative Extensions  
-- Regime-switching DCC: VIX-based dynamics  
-- Hybrid GARCH + LSTM ensembles  
-- Convex CVaR optimization with turnover constraints  
-- Explainable AI via SHAP feature attribution  
-
----
-
-# 👥 Team & Governance  
-
-## Quantitative Research  
-- **Dr. Sarah Chen** (ex-Renaissance) – Volatility modeling  
-- **Mark Rodriguez** (ex-Bridgewater) – Portfolio optimization  
-
-## Engineering  
-- **James Wilson** (ex-Jane Street) – Backtesting infrastructure  
-- **Lisa Zhang** (ex-Two Sigma) – ML systems  
-
-## Governance  
-- Model review committee: Monthly validation  
-- Independent backtest oversight  
-- 90% test coverage minimum  
+## Innovative Extensions
+- Regime-switching DCC: VIX-based dynamics
+- Hybrid GARCH + LSTM ensembles
+- Convex CVaR optimization with turnover constraints
+- Explainable AI via SHAP feature attribution
 
 ---
 
-# 📞 Support  
+# 👥 Team & Governance
 
-- **For Researchers** → Model Cards, Example Notebooks, API Reference  
-- **For Developers** → CI/CD Setup, Testing Guide, Benchmarks  
-- **For Portfolio Managers** → Dashboard Guide, Investment Memo, Risk Framework  
+## Quantitative Research
+- **Dr. Sarah Chen** (ex-Renaissance) – Volatility modeling
+- **Mark Rodriguez** (ex-Bridgewater) – Portfolio optimization
+
+## Engineering
+- **James Wilson** (ex-Jane Street) – Backtesting infrastructure
+- **Lisa Zhang** (ex-Two Sigma) – ML systems
+
+## Governance
+- Model review committee: Monthly validation
+- Independent backtest oversight
+- 90% test coverage minimum
 
 ---
 
-# 📜 License  
+# 📞 Support
 
-This project is licensed under the **MIT License** – see [LICENSE](LICENSE) for details.  
+- **For Researchers** → Model Cards, Example Notebooks, API Reference
+- **For Developers** → CI/CD Setup, Testing Guide, Benchmarks
+- **For Portfolio Managers** → Dashboard Guide, Investment Memo, Risk Framework
 
 ---
 
-## Citation  
+# 📜 License
+
+This project is licensed under the **MIT License** – see [LICENSE](LICENSE) for details.
+
+---
+
+## Citation
 
 ```bibtex
 @software{ai_volatility_2025,
@@ -247,6 +254,7 @@ This project is licensed under the **MIT License** – see [LICENSE](LICENSE) fo
   year = {2025},
   url = {https://github.com/your-org/ai-volatility-portfolio-optimizer}
 }
+<<<<<<< Updated upstream
 
 
 
@@ -266,3 +274,5 @@ This project is licensed under the **MIT License** – see [LICENSE](LICENSE) fo
 
 
 
+=======
+>>>>>>> Stashed changes

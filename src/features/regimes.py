@@ -2,7 +2,7 @@ from enum import Enum
 
 import pandas as pd
 
-from src.config import settings
+from src.config.settings import settings
 from src.infra.logging import logger
 
 
@@ -12,12 +12,12 @@ class VolatilityRegime(Enum):
     HIGH = 3
     EXTREME = 4
 
-class RegimeDetector:
-    """Advanced volatility regime detection with adaptive thresholds and hysteresis."""
 
+class RegimeDetector:
     def __init__(self):
+        # settings is just a Python module → constants are available directly
         self.thresholds = settings.VIX_THRESHOLDS
-        self.hysteresis = 0.9  # Prevents rapid switching between regimes
+        self.hysteresis = 0.9
         self.current_regime = None
 
     def detect_regimes(self, vix_series: pd.Series) -> pd.Series:
@@ -59,8 +59,10 @@ class RegimeDetector:
 
             regimes.iloc[i] = self.current_regime
 
-        logger.info("Volatility regimes detected",
-                   regime_counts=regimes.value_counts().to_dict())
+        logger.info(
+            "Volatility regimes detected",
+            regime_counts=regimes.value_counts().to_dict(),
+        )
         return regimes
 
     def create_regime_features(self, price_data: pd.DataFrame) -> pd.DataFrame:

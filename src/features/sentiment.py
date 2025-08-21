@@ -20,7 +20,9 @@ class SentimentAnalyzer:
         self.cache_dir = settings.PROCESSED_DATA_DIR / "sentiment_cache"
         self.cache_dir.mkdir(parents=True, exist_ok=True)
 
-    @retry(stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10))
+    @retry(
+        stop=stop_after_attempt(3), wait=wait_exponential(multiplier=1, min=4, max=10)
+    )
     def analyze_transcript(self, text: str, ticker: str) -> Dict[str, float]:
         """Analyze earnings call transcript using LLM with cache."""
         cache_file = self.cache_dir / f"{ticker}_{hash(text)}.parquet"
@@ -32,14 +34,20 @@ class SentimentAnalyzer:
             response = openai.ChatCompletion.create(
                 model="gpt-4",
                 messages=[
-                    {"role": "system", "content": "You are a financial analyst specializing in sentiment analysis. Provide quantitative scores for the following aspects:"},
-                    {"role": "user", "content": f"Analyze this {ticker} earnings transcript:\n\n{text}\n\nProvide scores for:"}
+                    {
+                        "role": "system",
+                        "content": "You are a financial analyst specializing in sentiment analysis. Provide quantitative scores for the following aspects:",
+                    },
+                    {
+                        "role": "user",
+                        "content": f"Analyze this {ticker} earnings transcript:\n\n{text}\n\nProvide scores for:",
+                    },
                 ],
                 temperature=0,
                 max_tokens=500,
                 top_p=1,
                 frequency_penalty=0,
-                presence_penalty=0
+                presence_penalty=0,
             )
 
             # Parse response into structured format
@@ -84,7 +92,10 @@ class SentimentAnalyzer:
                     sentiment_df[col] - sentiment_df[col].rolling(21).mean()
                 ) / sentiment_df[col].rolling(21).std()
 
-                features[f"{col}_trend"] = sentiment_df[col].rolling(5).mean() - sentiment_df[col].rolling(21).mean()
+                features[f"{col}_trend"] = (
+                    sentiment_df[col].rolling(5).mean()
+                    - sentiment_df[col].rolling(21).mean()
+                )
 
         return features.dropna()
 
@@ -96,5 +107,5 @@ class SentimentAnalyzer:
             "sentiment_score": 0.5,  # Placeholder
             "uncertainty_score": 0.3,
             "growth_mentions": 0.7,
-            "risk_mentions": 0.4
+            "risk_mentions": 0.4,
         }

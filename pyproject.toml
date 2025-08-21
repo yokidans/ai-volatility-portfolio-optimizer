@@ -4,7 +4,13 @@ line-length = 88
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "B", "C", "N", "D", "S", "T", "Q"]
 ignore = []
-extend-ignore = ["D203", "D212"]  # Resolve incompatible docstring rules
+extend-ignore = [
+  "D203",  # One-blank-line-before-class
+  "D212",  # Multi-line docstring should start on first line
+  "D100",  # Missing docstring in public module
+  "D107",  # Missing docstring in __init__
+  "S101",  # Allow assert statements
+]
 
 [tool.black]
 line-length = 88
@@ -15,8 +21,10 @@ python_version = "3.10"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
+explicit_package_bases = true
+mypy_path = ["src"]
 
 [tool.pytest.ini_options]
 python_files = "test_*.py"
 testpaths = ["tests"]
-addopts = "--cov=src --cov-report=term-missing"
+addopts = "--cov=src --cov-report=term-missing --cov-fail-under=90"

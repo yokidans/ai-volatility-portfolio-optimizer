@@ -10,12 +10,16 @@ from src.models.dcc_garch import DCCGARCH
 def mock_returns():
     np.random.seed(settings.SEED)
     dates = pd.date_range(start="2020-01-01", periods=100)
-    returns = pd.DataFrame({
-        "SPY": np.random.normal(0.0005, 0.01, 100),
-        "TSLA": np.random.normal(0.001, 0.02, 100),
-        "BND": np.random.normal(0.0002, 0.005, 100)
-    }, index=dates)
+    returns = pd.DataFrame(
+        {
+            "SPY": np.random.normal(0.0005, 0.01, 100),
+            "TSLA": np.random.normal(0.001, 0.02, 100),
+            "BND": np.random.normal(0.0002, 0.005, 100),
+        },
+        index=dates,
+    )
     return returns
+
 
 def test_dcc_garch_fit(mock_returns):
     model = DCCGARCH()
@@ -28,8 +32,11 @@ def test_dcc_garch_fit(mock_returns):
     # Check correlation matrix properties
     for corr_matrix in model.correlations:
         assert np.allclose(np.diag(corr_matrix), 1.0)  # Diagonal is 1
-        assert np.all(corr_matrix >= -1) and np.all(corr_matrix <= 1)  # Valid correlations
+        assert np.all(corr_matrix >= -1) and np.all(
+            corr_matrix <= 1
+        )  # Valid correlations
         assert np.allclose(corr_matrix, corr_matrix.T)  # Symmetric
+
 
 def test_forecast_correlation(mock_returns):
     model = DCCGARCH()
@@ -41,18 +48,15 @@ def test_forecast_correlation(mock_returns):
     eigvals = np.linalg.eigvals(forecast)
     assert np.all(eigvals > 0)  # Positive definite
 
+
 def test_regularization():
     from src.models.dcc_garch import DCCGARCH
 
     # Create a non-positive definite matrix
-    R = np.array([
-        [1.0, 0.9, 0.9],
-        [0.9, 1.0, 0.9],
-        [0.9, 0.9, 1.0]
-    ])
+    R = np.array([[1.0, 0.9, 0.9], [0.9, 1.0, 0.9], [0.9, 0.9, 1.0]])
 
     # Force it to be non-positive definite
-    R[2,2] = -1.0
+    R[2, 2] = -1.0
 
     regularized = DCCGARCH._regularize_correlation(R)
     eigvals = np.linalg.eigvals(regularized)

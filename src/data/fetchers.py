@@ -1,151 +1,110 @@
-import pandas as pd
-import numpy as np
-import yfinance as yf
-from typing import List, Optional
-from datetime import datetime, timedelta
+"""
+src/data/fetchers.py
+
+Data fetching utilities for equities, ETFs, and macro series.
+Designed for reproducibility: all calls have retry, timeout, and deterministic saving.
+
+Author: GMF Quant Lab
+"""
+
+import logging
+import time
 from pathlib import Path
-from tenacity import retry, stop_after_attempt, wait_exponential
-from src.config import settings
-from src.infra.logging import logger
-import pickle
+from typing import List, Optional, Union
 
-class DataFetcher:
-    """Financial data fetcher with preloaded data fallback."""
-    
-    def __init__(self):
-        self.cache_dir = Path(settings.RAW_DATA_DIR)
-        self.cache_dir.mkdir(parents=True, exist_ok=True)
-        self.preloaded_dir = Path(settings.PRELOADED_DATA_DIR)
-        self.preloaded_dir.mkdir(parents=True, exist_ok=True)
-        
-        # Initialize preloaded data
-        self._initialize_preloaded_data()
-    
-    def _create_sample_data(self, ticker: str, days: int = 3287) -> pd.DataFrame:
-        """Create sample data for a ticker with consistent lengths."""
-        dates = pd.date_range(start='2010-01-01', periods=days)
-        base_price = np.random.uniform(30, 50, 1)[0]  # Different base price for each ticker
-        
-        return pd.DataFrame({
-            'date': dates,
-            'open': base_price + np.cumsum(np.random.normal(0, 0.5, days)),
-            'high': base_price + np.cumsum(np.random.normal(0.1, 0.5, days)),
-            'low': base_price + np.cumsum(np.random.normal(-0.1, 0.5, days)),
-            'close': base_price + np.cumsum(np.random.normal(0, 0.5, days)),
-            'volume': np.random.randint(1000000, 100000000, days),
-            'ticker': ticker
-        })
-    
-    def _initialize_preloaded_data(self):
-        """Create preloaded data files if they don't exist."""
-        tickers = settings.TICKERS + settings.BENCHMARKS
-        
-        for ticker in tickers:
-            file_path = self.preloaded_dir / f"{ticker}.pkl"
-            if not file_path.exists():
-                try:
-                    sample_data = self._create_sample_data(ticker)
-                    sample_data.to_pickle(file_path)
-                    logger.info(f"Created preloaded data for {ticker}")
-                except Exception as e:
-                    logger.error(f"Failed to create preloaded data for {ticker}: {str(e)}")
-    
-    def _load_preloaded_data(self, ticker: str) -> Optional[pd.DataFrame]:
-        """Load preloaded data for a ticker."""
-        file_path = self.preloaded_dir / f"{ticker}.pkl"
-        if file_path.exists():
-            try:
-                data = pd.read_pickle(file_path)
-                # Filter to our date range
-                data['date'] = pd.to_datetime(data['date'])
-                data = data[(data['date'] >= pd.to_datetime(settings.TRAIN_START)) & 
-                           (data['date'] <= pd.to_datetime(settings.END_DATE))]
-                if not data.empty:
-                    logger.warning(f"Using preloaded data for {ticker}")
-                    return data
-            except Exception as e:
-                logger.error(f"Failed to load preloaded data for {ticker}: {str(e)}")
-        return None
-    
-    @retry(stop=stop_after_attempt(2), wait=wait_exponential(multiplier=1, min=2, max=5))
-    def _try_yfinance(self, ticker: str) -> Optional[pd.DataFrame]:
-        """Try fetching data using yfinance."""
+import pandas as pd
+import yfinance as yf
+
+logger = logging.getLogger(__name__)
+DATA_DIR = Path("data/raw")
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def get_yfinance_data(
+    tickers: Union[str, List[str]],
+    start: str = "2015-01-01",
+    end: Optional[str] = None,
+    interval: str = "1d",
+    cache: bool = True,
+    retries: int = 3,
+    pause: int = 2,
+) -> pd.DataFrame:
+    """
+    Fetch historical price data from Yahoo Finance.
+
+    Parameters
+    ----------
+    tickers : str or list of str
+        One or multiple ticker symbols (e.g., "SPY", ["SPY", "^VIX"]).
+    start : str
+        Start date (YYYY-MM-DD).
+    end : str, optional
+        End date (YYYY-MM-DD). Defaults to today if None.
+    interval : str
+        Data frequency ("1d", "1wk", "1mo").
+    cache : bool
+        If True, caches results to `data/raw/<tickers>.parquet`.
+    retries : int
+        Number of retry attempts if API call fails.
+    pause : int
+        Seconds to wait between retries.
+
+    Returns
+    -------
+    pd.DataFrame
+        DataFrame indexed by date with columns per ticker (Adj Close).
+
+    """
+    if isinstance(tickers, str):
+        tickers = [tickers]
+
+    # cache path
+    fname = f"{'_'.join([t.replace('^','') for t in tickers])}_{interval}.parquet"
+    cache_path = DATA_DIR / fname
+
+    if cache and cache_path.exists():
+        logger.info(f"Loading cached data: {cache_path}")
+        return pd.read_parquet(cache_path)
+
+    # fetch with retry
+    for attempt in range(1, retries + 1):
         try:
-            data = yf.download(
-                ticker,
-                start=settings.TRAIN_START - timedelta(days=1),
-                end=settings.END_DATE + timedelta(days=1),
-                progress=False
+            logger.info(f"Fetching data from yfinance for {tickers}...")
+            df = yf.download(
+                tickers,
+                start=start,
+                end=end,
+                interval=interval,
+                auto_adjust=False,
+                progress=False,
+                threads=True,
             )
-            if not data.empty:
-                data = data.reset_index()
-                data['ticker'] = ticker
-                return data.rename(columns={'Date': 'date'})
-            return None
+            break
         except Exception as e:
-            logger.warning(f"yfinance failed for {ticker}: {str(e)}")
-            return None
-    
-    def fetch_stock_data(self, ticker: str) -> pd.DataFrame:
-        """Fetch data for a single ticker."""
-        # Try cache first
-        cache_file = self.cache_dir / f"{ticker}.pkl"
-        if cache_file.exists():
-            try:
-                data = pd.read_pickle(cache_file)
-                logger.info(f"Loaded cached data for {ticker}")
-                return data
-            except Exception as e:
-                logger.warning(f"Failed to load cache for {ticker}: {str(e)}")
-        
-        logger.info(f"Fetching data for {ticker}")
-        
-        # Try yfinance
-        data = self._try_yfinance(ticker)
-        
-        # If API fails, use preloaded data
-        if data is None:
-            data = self._load_preloaded_data(ticker)
-        
-        if data is None:
-            raise ValueError(f"All data sources failed for {ticker}")
-        
-        # Save to cache
-        try:
-            data.to_pickle(cache_file)
-        except Exception as e:
-            logger.warning(f"Failed to save cache for {ticker}: {str(e)}")
-        
-        return data
-    
-    def fetch_all_stock_data(self, tickers: List[str]) -> pd.DataFrame:
-        """Fetch data for multiple tickers."""
-        all_data = []
-        for ticker in tickers:
-            try:
-                data = self.fetch_stock_data(ticker)
-                all_data.append(data)
-            except Exception as e:
-                logger.error(f"Skipping {ticker}: {str(e)}")
-                continue
-        
-        if not all_data:
-            raise ValueError("No stock data could be fetched")
-        
-        return pd.concat(all_data).sort_values(['date', 'ticker'])
+            logger.warning(f"Attempt {attempt} failed: {e}")
+            if attempt < retries:
+                time.sleep(pause)
+            else:
+                raise
 
-    def fetch_all_data(self) -> pd.DataFrame:
-        """Fetch all required data."""
-        return self.fetch_all_stock_data(
-            tickers=settings.TICKERS + settings.BENCHMARKS
-        )
+    # Ensure proper format: keep Adj Close only
+    if isinstance(df.columns, pd.MultiIndex):
+        df = df["Adj Close"].copy()
+    elif "Adj Close" in df.columns:
+        df = df[["Adj Close"]].copy()
+        df = df.rename(columns={"Adj Close": tickers[0]})
+    else:
+        raise ValueError("Unexpected yfinance DataFrame format.")
 
+    # Save cache
+    if cache:
+        df.to_parquet(cache_path)
+        logger.info(f"Saved data to {cache_path}")
+
+    return df
+
+
+# Example usage when run standalone
 if __name__ == "__main__":
-    try:
-        fetcher = DataFetcher()
-        assets = fetcher.fetch_all_data()
-        print("Assets data (5 rows):")
-        print(assets.head())
-    except Exception as e:
-        logger.critical(f"Fatal error: {str(e)}")
-        raise
+    data = get_yfinance_data(["SPY", "^VIX"], start="2020-01-01", end="2023-01-01")
+    print(data.head())

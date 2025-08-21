@@ -1,30 +1,50 @@
-from datetime import datetime
+# src/config/settings.py
+import os
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from dotenv import load_dotenv
 
-# Load environment variables
 load_dotenv()
 
-# Project root directory
-REPO_ROOT = Path(__file__).parent.parent.parent
 
-# Data directories
-RAW_DATA_DIR = REPO_ROOT / "data" / "raw"
-PROCESSED_DATA_DIR = REPO_ROOT / "data" / "processed"
-PRELOADED_DATA_DIR = REPO_ROOT / "data" / "preloaded"  # New directory for preloaded data
+@dataclass
+class Settings:
+    # Paths
+    DATA_DIR: Path = Path("data")
+    RAW_DIR: Path = DATA_DIR / "raw"
+    INTERIM_DIR: Path = DATA_DIR / "interim"
+    PROCESSED_DIR: Path = DATA_DIR / "processed"
 
-# Logs directory
-LOGS_DIR = REPO_ROOT / "logs"
-LOGS_DIR.mkdir(parents=True, exist_ok=True)
+    # Seeds
+    GLOBAL_SEED: int = 42
 
-# Data parameters
-TICKERS = ["AAPL", "MSFT", "GOOG"]  # Using standard ticker symbols
-BENCHMARKS = ["SPY"]  # S&P 500 ETF
+    # VIX thresholds (✅ added here)
+    VIX_THRESHOLDS: dict = field(
+        default_factory=lambda: {"low": 15, "medium": 25, "high": 30, "extreme": 40}
+    )
 
-# Date ranges
-TRAIN_START = datetime(2010, 1, 1)
-END_DATE = datetime.now()
+    # Portfolio constraints
+    MAX_WEIGHT: float = 0.3
+    MIN_WEIGHT: float = 0.01
+    TURNOVER_CAP: float = 0.2
+    CASH_SLEEVE: float = 0.05
+    LEVERAGE_LIMIT: float = 1.0
 
-# Cache settings
-CACHE_FORMAT = "csv"  # Options: "csv", "parquet", "pickle"
+    # Risk
+    CVAR_ALPHA: float = 0.05
+    VAR_ALPHA: float = 0.05
+
+    # Backtesting
+    INITIAL_CAPITAL: float = 1_000_000.0
+    COMMISSION_RATE: float = 0.0005
+    SLIPPAGE_RATE: float = 0.0002
+    REBALANCE_FREQUENCY: str = "monthly"
+
+    # API keys
+    FRED_API_KEY: str = os.getenv("FRED_API_KEY")
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY")
+
+
+# ✅ instantiate once for use everywhere
+settings = Settings()

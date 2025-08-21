@@ -30,7 +30,9 @@ def test_full_pipeline():
 
     # 4. Train DCC-GARCH
     dcc_model = DCCGARCH()
-    asset_returns = assets.pivot(index="date", columns="ticker", values="returns")[settings.TICKERS]
+    asset_returns = assets.pivot(index="date", columns="ticker", values="returns")[
+        settings.TICKERS
+    ]
     dcc_model.fit(asset_returns.dropna())
     corr_forecast = dcc_model.forecast_correlation()
     assert corr_forecast.shape == (len(settings.TICKERS), len(settings.TICKERS))
@@ -42,8 +44,12 @@ def test_full_pipeline():
     assert len(result["weights"]) == len(settings.TICKERS)
 
     # 6. Backtesting
-    weights = pd.DataFrame([result["weights"]], columns=settings.TICKERS, index=[asset_returns.index[-1]])
+    weights = pd.DataFrame(
+        [result["weights"]], columns=settings.TICKERS, index=[asset_returns.index[-1]]
+    )
     backtester = BacktestEngine()
-    prices = assets.pivot(index="date", columns="ticker", values="close")[settings.TICKERS]
+    prices = assets.pivot(index="date", columns="ticker", values="close")[
+        settings.TICKERS
+    ]
     backtest_results = backtester.run_backtest(prices, weights)
     assert not backtest_results["portfolio_value"].empty

@@ -30,7 +30,7 @@ function Initialize-Environment {
     if (-not (Test-Path ".venv")) {
         throw "Virtual environment not found. Create one with 'python -m venv .venv'"
     }
-    
+
     # For PowerShell Core:
     if ($PSVersionTable.PSEdition -eq "Core") {
         .\.venv\bin\Activate.ps1
@@ -39,12 +39,12 @@ function Initialize-Environment {
     else {
         .\.venv\Scripts\Activate.ps1
     }
-    
+
     # Create output directory
     if (-not (Test-Path $OutputDir)) {
         New-Item -ItemType Directory -Path $OutputDir | Out-Null
     }
-    
+
     # Set up logging
     $logFile = Join-Path $OutputDir "dcc_garch_$(Get-Date -Format 'yyyyMMdd_HHmmss').log"
     Start-Transcript -Path $logFile -Append
@@ -54,7 +54,7 @@ function Initialize-Environment {
 function Main {
     try {
         Initialize-Environment
-        
+
         if ($Verbose) {
             Write-Host "Starting DCC-GARCH analysis with parameters:"
             Write-Host "  Data: $DataPath"
@@ -65,7 +65,7 @@ function Main {
             Write-Host "  Rolling window: $Window"
             Write-Host "  Forecast horizon: $Horizon"
         }
-        
+
         # Prepare Python command
         $pythonCmd = @"
 import pandas as pd
@@ -104,7 +104,7 @@ if $($Plot.IsPresent):
     fig1 = model.plot_correlation_evolution()
     fig1.savefig(os.path.join(r'$OutputDir', 'correlation_evolution.png'))
     plt.close(fig1)
-    
+
     fig2 = model.plot_average_correlation()
     fig2.savefig(os.path.join(r'$OutputDir', 'average_correlation.png'))
     plt.close(fig2)
@@ -116,17 +116,17 @@ print("Analysis completed successfully")
         if ($Verbose) {
             Write-Host "Executing DCC-GARCH model..."
         }
-        
+
         $output = $pythonCmd | python
-        
+
         if ($Verbose) {
             Write-Host $output
             Write-Host "Results saved to $OutputDir"
-            
+
             # Show output files
             Get-ChildItem $OutputDir | Select-Object Name, LastWriteTime | Format-Table -AutoSize
         }
-        
+
     } catch {
         Write-Host "Error: $_" -ForegroundColor Red
         exit 1

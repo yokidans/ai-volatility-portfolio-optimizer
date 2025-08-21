@@ -1,4 +1,4 @@
-﻿"""Test module for data fetchers."""
+"""Test module for data fetchers."""
 
 from src.data import fetchers
 

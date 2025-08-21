@@ -1,4 +1,4 @@
-﻿import pickle
+import pickle
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional
@@ -14,7 +14,9 @@ class DataLoader:
 
     def __init__(self, cache_dir: str = "data/cache"):
         self.cache = {}
-        self.default_start = (datetime.now() - timedelta(days=5*365)).strftime("%Y-%m-%d")
+        self.default_start = (datetime.now() - timedelta(days=5 * 365)).strftime(
+            "%Y-%m-%d"
+        )
         self.default_end = datetime.now().strftime("%Y-%m-%d")
         self.cache_dir = Path(cache_dir)
         self._init_cache()
@@ -42,11 +44,13 @@ class DataLoader:
         except Exception as e:
             logger.warning(f"Could not save to cache: {str(e)}")
 
-    def load_returns(self,
-                   ticker: str,
-                   start: Optional[str] = None,
-                   end: Optional[str] = None,
-                   interval: str = "1d") -> pd.Series:
+    def load_returns(
+        self,
+        ticker: str,
+        start: Optional[str] = None,
+        end: Optional[str] = None,
+        interval: str = "1d",
+    ) -> pd.Series:
         """
         Load daily returns for a ticker with enhanced options.
 
@@ -84,7 +88,7 @@ class DataLoader:
                 end=end or self.default_end,
                 interval=interval,
                 progress=False,
-                auto_adjust=True
+                auto_adjust=True,
             )
 
             if data.empty:
@@ -109,9 +113,7 @@ class DataLoader:
             logger.error(f"Failed to load data for {ticker}: {str(e)}", exc_info=True)
             raise
 
-    def get_multiple_returns(self,
-                           tickers: list,
-                           **kwargs) -> pd.DataFrame:
+    def get_multiple_returns(self, tickers: list, **kwargs) -> pd.DataFrame:
         """
         Load returns for multiple tickers.
 
